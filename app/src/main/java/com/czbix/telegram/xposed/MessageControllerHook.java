@@ -20,7 +20,7 @@ class MessageControllerHook extends XC_MethodHook {
             if (clsUpdateDeleteMessages.isInstance(update) || clsUpdateDeleteChannelMessages.isInstance(update)) {
                 //noinspection unchecked
                 final ArrayList<Integer> messages = (ArrayList<Integer>) XposedHelpers.getObjectField(update, "messages");
-                XposedHelpers.setAdditionalInstanceField(messages, "ccc_keep", false);
+                XposedHelpers.setAdditionalInstanceField(messages, "ccc_keep", true);
             }
         }
     }

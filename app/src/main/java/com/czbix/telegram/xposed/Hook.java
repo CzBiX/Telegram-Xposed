@@ -17,9 +17,10 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
 public class Hook implements IXposedHookZygoteInit, IXposedHookLoadPackage {
     private static final String PKG_NAME = "org.telegram.messenger";
+
     private static String MODULE_PATH;
-    private Class<?> clsExEmojiDrawable;
-    private Class<?> clsMessageStorageHook;
+    private static Class<?> clsExEmojiDrawable;
+    private static Class<?> clsTelegramWord;
     private int drawImgSize;
     private Typeface typeface;
 
@@ -78,7 +79,7 @@ public class Hook implements IXposedHookZygoteInit, IXposedHookLoadPackage {
 
                         final int channelId = (int) param.args[1];
                         final Object database = XposedHelpers.getObjectField(param.thisObject, "database");
-                        XposedHelpers.callStaticMethod(clsMessageStorageHook, "call", database, messages, channelId);
+                        XposedHelpers.callStaticMethod(clsTelegramWord, "markMessagesAsDeletedInternal", database, messages, channelId);
 
                         param.setResult(null);
                     }
@@ -120,6 +121,22 @@ public class Hook implements IXposedHookZygoteInit, IXposedHookLoadPackage {
                         }
                     }
                 });
+
+        final Class<?> clsChatMessageCell = XposedHelpers.findClass("org.telegram.ui.Cells.ChatMessageCell", lpparam.classLoader);
+        XposedHelpers.findAndHookMethod(clsChatMessageCell, "measureTime", "org.telegram.messenger.MessageObject", new XC_MethodHook() {
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                final Object messageObject = param.args[0];
+
+                final boolean isDeleteMessage = (boolean) XposedHelpers.callStaticMethod(clsTelegramWord, "isDeleteMessage", messageObject);
+                if (isDeleteMessage) {
+                    String currentTimeString = (String) XposedHelpers.getObjectField(param.thisObject, "currentTimeString");
+                    currentTimeString = currentTimeString.replace("edited", "delete");
+
+                    XposedHelpers.setObjectField(param.thisObject, "currentTimeString", currentTimeString);
+                }
+            }
+        });
     }
 
     private void initCls(ClassLoader classLoader) throws ClassNotFoundException {
@@ -128,6 +145,6 @@ public class Hook implements IXposedHookZygoteInit, IXposedHookLoadPackage {
 
         PathClassLoader loader = new PathClassLoader(MODULE_PATH, classLoader);
         clsExEmojiDrawable = loader.loadClass("com.czbix.telegram.xposed.ExEmojiDrawable");
-        clsMessageStorageHook = loader.loadClass("com.czbix.telegram.xposed.MessageStorageHook");
+        clsTelegramWord = loader.loadClass("com.czbix.telegram.xposed.TelegramWorld");
     }
 }
