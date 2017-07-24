@@ -11,6 +11,16 @@ android {
         versionCode 2
         versionName "1.1"
     }
+
+    flavorDimensions "lite"
+    productFlavors {
+        full {
+            dimension "lite"
+        }
+        lite {
+            dimension "lite"
+        }
+    }
     buildTypes {
         release {
             minifyEnabled false

@@ -1,11 +1,9 @@
 package com.czbix.telegram.xposed;
 
 import android.content.res.XModuleResources;
-import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.Keep;
-import android.text.Spannable;
 import android.text.TextPaint;
 
 import dalvik.system.PathClassLoader;
@@ -63,10 +61,12 @@ public class Hook implements IXposedHookZygoteInit, IXposedHookLoadPackage {
                 if (!isInited) {
                     drawImgSize = XposedHelpers.getStaticIntField(clsEmoji, "drawImgSize");
 
-                    final Typeface typeface = Typeface.createFromAsset(
-                            XModuleResources.createInstance(MODULE_PATH, null).getAssets(),
-                            "NotoColorEmoji.ttf");
-                    ((TextPaint) XposedHelpers.getStaticObjectField(clsExEmojiDrawable, "textPaint")).setTypeface(typeface);
+                    if (BuildConfig.FLAVOR.equals("full")) {
+                        final Typeface typeface = Typeface.createFromAsset(
+                                XModuleResources.createInstance(MODULE_PATH, null).getAssets(),
+                                "src/full/assets/NotoColorEmoji.ttf");
+                        ((TextPaint) XposedHelpers.getStaticObjectField(clsExEmojiDrawable, "textPaint")).setTypeface(typeface);
+                    }
 
                     isInited = true;
                 }
