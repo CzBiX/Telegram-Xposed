@@ -1,8 +1,8 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 24
-    buildToolsVersion "25.0.0"
+    compileSdkVersion 25
+    buildToolsVersion "25.0.2"
 
     defaultConfig {
         applicationId "com.czbix.telegram.xposed"
@@ -24,7 +24,7 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     provided fileTree(dir: 'deps', include: ['*.jar'])
 
-    provided 'com.android.support:support-annotations:24.2.1'
+    provided 'com.android.support:support-annotations:25.3.1'
     provided 'de.robv.android.xposed:api:81'
 
     testCompile 'junit:junit:4.12'

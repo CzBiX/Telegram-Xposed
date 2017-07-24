@@ -3,7 +3,6 @@ package com.czbix.telegram.xposed;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.graphics.Typeface;
 import android.support.annotation.Keep;
 import android.text.TextPaint;
 
@@ -11,21 +10,20 @@ import org.telegram.messenger.Emoji;
 
 @Keep
 public class ExEmojiDrawable extends Emoji.EmojiDrawable {
-    private TextPaint textPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
-    private String code;
+    public static TextPaint textPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+    private CharSequence cs;
 
-    public ExEmojiDrawable(CharSequence code, Typeface typeface) {
+    public ExEmojiDrawable(CharSequence cs) {
         super(null);
 
-        this.code = code.toString();
-        this.textPaint.setTypeface(typeface);
+        this.cs = cs;
     }
 
     @Override
     public void draw(Canvas canvas) {
-        final Rect drawRect = getDrawRect();
+        final Rect bounds = getDrawRect();
 
-        textPaint.setTextSize(drawRect.width() * 0.8f);
-        canvas.drawText(code, drawRect.left, drawRect.bottom * 0.8f, textPaint);
+        textPaint.setTextSize(bounds.width() * 0.82f);
+        canvas.drawText(cs, 0, cs.length(), bounds.left, bounds.bottom * 0.82f, textPaint);
     }
 }
