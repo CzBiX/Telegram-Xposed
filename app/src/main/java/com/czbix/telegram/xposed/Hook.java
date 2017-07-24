@@ -64,7 +64,7 @@ public class Hook implements IXposedHookZygoteInit, IXposedHookLoadPackage {
                     if (BuildConfig.FLAVOR.equals("full")) {
                         final Typeface typeface = Typeface.createFromAsset(
                                 XModuleResources.createInstance(MODULE_PATH, null).getAssets(),
-                                "src/full/assets/NotoColorEmoji.ttf");
+                                "NotoColorEmoji.ttf");
                         ((TextPaint) XposedHelpers.getStaticObjectField(clsExEmojiDrawable, "textPaint")).setTypeface(typeface);
                     }
 
